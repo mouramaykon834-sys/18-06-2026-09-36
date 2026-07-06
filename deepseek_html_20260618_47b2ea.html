@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>TMS Operacional — Sistema Completo v8.2</title>
+<title>TMS Operacional — Sistema Completo v9.0</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1484,7 +1484,7 @@
     <div class="sidebar-logo" id="sidebar-logo-container">
       <div class="logo-icon" id="sidebar-logo-icon">T</div>
       <img id="sidebar-logo-img" class="logo-img" style="display:none" alt="Logo">
-      <div class="logo-text"><strong>TMS OPS</strong><span>v8.2 · COMPLETO</span></div>
+      <div class="logo-text"><strong>TMS OPS</strong><span>v9.0 · COMPLETO</span></div>
     </div>
     <div class="sidebar-section-title">Painel</div>
     <div class="nav-item" onclick="window.navigate('dashboard')"><span class="nav-icon">▦</span> Dashboard</div>
@@ -1700,11 +1700,21 @@
         <div class="table-container"><div class="table-header-bar"><div class="table-title">📋 Usuários <span class="table-count" id="usuarios-count">0</span></div><input class="search-input" type="text" id="usuarios-search" placeholder="Buscar..." oninput="window.renderUsuarios()"></div><div class="table-wrap"><table id="usuarios-table"><thead><tr><th>#</th><th>Usuário</th><th>Nome</th><th>Nível</th><th>Último Login</th><th>Ações</th></tr></thead><tbody id="usuarios-table-body"></tbody></table></div></div>
       </div>
 
-      <!-- MONITORAMENTO -->
-      <div id="page-monitoramento" class="page"><div class="section-header"><div><div class="section-title">👁️ Monitoramento</div><div class="section-subtitle">ATIVIDADE DOS USUÁRIOS</div></div><button class="btn btn-primary" onclick="window.exportMonitoramentoToExcel()">📊 Exportar</button></div>
+      <!-- MONITORAMENTO (Melhorado) -->
+      <div id="page-monitoramento" class="page"><div class="section-header"><div><div class="section-title">👁️ Monitoramento do Sistema</div><div class="section-subtitle">SAÚDE, ERROS E ATIVIDADE</div></div><button class="btn btn-primary" onclick="window.exportMonitoramentoToExcel()">📊 Exportar</button></div>
         <div class="kpi-grid" id="monit-kpi-grid"></div>
-        <div class="filter-bar"><input class="search-input" type="text" id="monit-search" placeholder="Buscar..." oninput="window.renderMonitoramento()"><select class="form-control" id="monit-filter-role" onchange="window.renderMonitoramento()" style="width:160px"><option value="">Todos</option><option value="master">Master</option><option value="operador">Operador</option><option value="consultor">Consultor</option></select><select class="form-control" id="monit-filter-status" onchange="window.renderMonitoramento()" style="width:160px"><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select><button class="filter-reset" onclick="window.resetMonitoramentoFilter()">↺ Limpar</button></div>
-        <div class="table-container"><div class="table-header-bar"><div class="table-title">📋 Status <span class="table-count" id="monit-count">0</span></div></div><div class="table-wrap"><table id="monit-table"><thead><tr><th>#</th><th>Nome</th><th>Usuário</th><th>Nível</th><th>Último Login</th><th>Dias</th><th>Logins</th><th>Status</th></tr></thead><tbody id="monit-table-body"></tbody></table></div></div>
+        <div class="filter-bar">
+          <input class="search-input" type="text" id="monit-search" placeholder="Buscar usuários..." oninput="window.renderMonitoramento()">
+          <select class="form-control" id="monit-filter-role" onchange="window.renderMonitoramento()" style="width:160px"><option value="">Todos</option><option value="master">Master</option><option value="operador">Operador</option><option value="consultor">Consultor</option></select>
+          <select class="form-control" id="monit-filter-status" onchange="window.renderMonitoramento()" style="width:160px"><option value="">Todos</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select>
+          <button class="filter-reset" onclick="window.resetMonitoramentoFilter()">↺ Limpar</button>
+        </div>
+        <div class="table-container"><div class="table-header-bar"><div class="table-title">📋 Status dos Usuários <span class="table-count" id="monit-count">0</span></div></div><div class="table-wrap"><table id="monit-table"><thead><tr><th>#</th><th>Nome</th><th>Usuário</th><th>Nível</th><th>Último Login</th><th>Dias</th><th>Logins</th><th>Status</th></tr></thead><tbody id="monit-table-body"></tbody></table></div></div>
+        <div style="margin-top:24px;">
+          <div class="section-header"><div><div class="section-title">🔴 Erros do Sistema</div><div class="section-subtitle">ÚLTIMOS 30 DIAS</div></div><button class="btn btn-secondary" onclick="window.limparErrosSistema()">🗑️ Limpar todos os erros</button></div>
+          <div class="kpi-grid" id="error-kpi-grid"></div>
+          <div class="table-container"><div class="table-header-bar"><div class="table-title">📋 Log de Erros <span class="table-count" id="error-count">0</span></div><input class="search-input" type="text" id="error-search" placeholder="Buscar erro..." oninput="window.renderErrosSistema()" style="max-width:300px;"></div><div class="table-wrap"><table id="error-table"><thead><tr><th>Data/Hora</th><th>Usuário</th><th>Módulo</th><th>Mensagem</th><th>Detalhes</th></tr></thead><tbody id="error-table-body"></tbody></table></div><div id="error-pagination" class="pagination"></div></div>
+        </div>
       </div>
 
       <!-- JORNADA -->
@@ -1988,6 +1998,7 @@
         <button class="btn btn-primary" onclick="window.gerarRelatorioMotoristas()">📊 Geral Motoristas</button>
         <button class="btn btn-primary" onclick="window.gerarRelatorioTreinamento()">🎓 Relatório de Treinamento</button>
         <button class="btn btn-primary" onclick="window.gerarRelatorioJornada()">🛣️ Jornadas</button>
+        <button class="btn btn-primary" onclick="window.gerarRelatorioResumoExecutivo()">📊 Resumo Executivo</button>
       </div>
 
       <div class="divider"></div>
@@ -2163,10 +2174,12 @@
     auditoria: { page: 1, limit: 20, total: 0, sortField: 'timestamp', sortOrder: 'desc' },
     monitoramento: { page: 1, limit: 20, total: 0, sortField: 'ultimoLogin', sortOrder: 'desc' },
     jornada: { page: 1, limit: 20, total: 0 },
-    checklist: { page: 1, limit: 20, total: 0 }
+    checklist: { page: 1, limit: 20, total: 0 },
+    erros: { page: 1, limit: 20, total: 0 }
   };
 
   let currentTheme = localStorage.getItem('tms_theme') || 'dark';
+  let systemErrors = []; // armazenar erros capturados
 
   const permissoes = {
     master: ['dashboard', 'executivo', 'motoristas', 'folgas', 'registros', 'manutencao', 'score', 'desempenho', 'jornada', 'chat', 'tarefas', 'relatorios', 'auditoria', 'monitoramento', 'configuracoes', 'usuarios', 'pendencias', 'checklist'],
@@ -2184,6 +2197,26 @@
       }
     }
   };
+
+  // ===== CAPTURA GLOBAL DE ERROS =====
+  window.addEventListener('error', function(e) {
+    const erro = {
+      timestamp: new Date().toISOString(),
+      usuario: currentUser?.nome || 'Sistema',
+      modulo: 'geral',
+      mensagem: e.message || 'Erro não identificado',
+      detalhes: e.stack || e.filename || '',
+      id: Date.now() + '_' + Math.random().toString(36).substr(2, 6)
+    };
+    systemErrors.push(erro);
+    // Armazenar no Firestore para persistência
+    try {
+      addDoc(collection(db, "system_errors"), erro);
+    } catch (err) {}
+    if (currentPage === 'monitoramento' && currentUser?.role === 'master') {
+      renderErrosSistema();
+    }
+  });
 
   // ===== UTILITÁRIOS =====
   function mostrarToast(msg, type = 'info') {
@@ -2285,7 +2318,11 @@
         if (fAtiva.tipo === 'Folga') { status = 'folga'; statusDetalhado = 'folga'; }
         else if (fAtiva.tipo === 'Férias') { status = 'ferias'; statusDetalhado = 'ferias'; }
         else if (fAtiva.tipo === 'Atestado') { status = 'atestado'; statusDetalhado = 'atestado'; }
-        else if (fAtiva.tipo === 'Desativado') { status = 'desativado'; statusDetalhado = fAtiva.obs?.includes('Rescisão') ? 'rescindido' : 'demitido'; }
+        else if (fAtiva.tipo === 'Licença') { status = 'licenca'; statusDetalhado = 'licenca'; }
+        else if (fAtiva.tipo === 'Desativado') { 
+          status = 'desativado'; 
+          statusDetalhado = fAtiva.obs?.includes('Rescisão') ? 'rescindido' : 'demitido'; 
+        }
         else { status = 'afastado'; statusDetalhado = 'afastado'; }
       }
       const mRegs = registros.filter(r => r.motoristaId === m.id);
@@ -2303,7 +2340,7 @@
       const criadoEm = m.criadoEm || m.timestamp || '';
       const importado = m.importado || false;
       const importacaoId = m.importacaoId || '';
-      return { ...m, status, statusDetalhado, score, totalRegs: mRegs.length, ultimoReg: uReg ? uReg.data : '-', manutencao, horasTrabalhadas, treinado, dataTreinamento, instrutor, criadoEm, importado, importacaoId };
+      return { ...m, status, statusDetalhado, score, totalRegs: mRegs.length, ultimoReg: uReg ? uReg.data : '-', ultimoRegObs: uReg ? uReg.obs : '', manutencao, horasTrabalhadas, treinado, dataTreinamento, instrutor, criadoEm, importado, importacaoId };
     });
   }
 
@@ -2790,6 +2827,7 @@
     const folgaCount = list.filter(m => m.statusDetalhado === 'folga').length;
     const feriasCount = list.filter(m => m.statusDetalhado === 'ferias').length;
     const atestadoCount = list.filter(m => m.statusDetalhado === 'atestado').length;
+    const licencaCount = list.filter(m => m.statusDetalhado === 'licenca').length;
     const rescindidoCount = list.filter(m => m.statusDetalhado === 'rescindido').length;
     const demitidoCount = list.filter(m => m.statusDetalhado === 'demitido').length;
     const atrasados = list.filter(m => m.status === 'atrasado').length;
@@ -2802,6 +2840,7 @@
         <div class="kpi-card ${dashFilterStatus === 'folga' ? 'active-filter' : ''}" style="--kpi-color:var(--yellow)" onclick="window.filterDash('folga')"><div class="kpi-label">🏖️ Folga</div><div class="kpi-value">${folgaCount}</div></div>
         <div class="kpi-card ${dashFilterStatus === 'ferias' ? 'active-filter' : ''}" style="--kpi-color:var(--blue)" onclick="window.filterDash('ferias')"><div class="kpi-label">🌴 Férias</div><div class="kpi-value">${feriasCount}</div></div>
         <div class="kpi-card ${dashFilterStatus === 'atestado' ? 'active-filter' : ''}" style="--kpi-color:var(--orange)" onclick="window.filterDash('atestado')"><div class="kpi-label">🏥 Atestado</div><div class="kpi-value">${atestadoCount}</div></div>
+        <div class="kpi-card ${dashFilterStatus === 'licenca' ? 'active-filter' : ''}" style="--kpi-color:var(--purple)" onclick="window.filterDash('licenca')"><div class="kpi-label">📋 Licença</div><div class="kpi-value">${licencaCount}</div></div>
         <div class="kpi-card ${dashFilterStatus === 'rescindido' ? 'active-filter' : ''}" style="--kpi-color:var(--purple)" onclick="window.filterDash('rescindido')"><div class="kpi-label">⚖️ Rescisão</div><div class="kpi-value">${rescindidoCount}</div></div>
         <div class="kpi-card ${dashFilterStatus === 'demitido' ? 'active-filter' : ''}" style="--kpi-color:var(--red)" onclick="window.filterDash('demitido')"><div class="kpi-label">🚫 Demitido</div><div class="kpi-value">${demitidoCount}</div></div>
         <div class="kpi-card ${dashFilterStatus === 'atrasado' ? 'active-filter' : ''}" style="--kpi-color:var(--red)" onclick="window.filterDash('atrasado')"><div class="kpi-label">🔴 Alertas</div><div class="kpi-value">${atrasados}</div></div>
@@ -2812,6 +2851,7 @@
     else if (dashFilterStatus === 'folga') filtrados = list.filter(m => m.statusDetalhado === 'folga');
     else if (dashFilterStatus === 'ferias') filtrados = list.filter(m => m.statusDetalhado === 'ferias');
     else if (dashFilterStatus === 'atestado') filtrados = list.filter(m => m.statusDetalhado === 'atestado');
+    else if (dashFilterStatus === 'licenca') filtrados = list.filter(m => m.statusDetalhado === 'licenca');
     else if (dashFilterStatus === 'rescindido') filtrados = list.filter(m => m.statusDetalhado === 'rescindido');
     else if (dashFilterStatus === 'demitido') filtrados = list.filter(m => m.statusDetalhado === 'demitido');
     else if (dashFilterStatus) filtrados = list.filter(m => m.status === dashFilterStatus);
@@ -2831,12 +2871,14 @@
           m.statusDetalhado === 'folga' ? 'FOLGA' : 
           m.statusDetalhado === 'ferias' ? 'FÉRIAS' : 
           m.statusDetalhado === 'atestado' ? 'ATESTADO' : 
+          m.statusDetalhado === 'licenca' ? 'LICENÇA' :
           m.statusDetalhado === 'rescindido' ? 'RESCISÃO' : 
           m.statusDetalhado === 'demitido' ? 'DEMITIDO' : 'AFASTADO');
         let colorClass = m.status === 'ativo' ? 'badge-ativo' : (m.status === 'atrasado' ? 'badge-atrasado' : 
           m.statusDetalhado === 'folga' ? 'badge-folga' : 
           m.statusDetalhado === 'ferias' ? 'badge-justificado' : 
           m.statusDetalhado === 'atestado' ? 'badge-alteracao' : 
+          m.statusDetalhado === 'licenca' ? 'badge-alteracao' :
           m.statusDetalhado === 'rescindido' ? 'badge-atrasado' : 
           m.statusDetalhado === 'demitido' ? 'badge-erro' : 'badge-folga');
         let sFill = m.score >= 80 ? 'var(--green)' : (m.score >= 50 ? 'var(--yellow)' : 'var(--red)');
@@ -2846,7 +2888,8 @@
           manutHtml = `<span class="badge ${statusMap[m.manutencao.status]?.class}">${statusMap[m.manutencao.status]?.label}</span>`;
         }
         const importadoBadge = m.importado ? '<span class="badge badge-importado">📥 Importado</span>' : '';
-        return `<tr class="clickable-row" onclick="window.mostrarDetalheMotorista('${m.id}')"><td class="td-mono">${start + i + 1}<td class="fw-700">${m.nome}<td class="td-mono">${m.cpf || '-'}<td class="td-mono">${m.placa}<td class="td-mono">${m.operador || '-'}<td class="td-mono"><span class="badge ${colorClass}"><div class="badge-dot"></div>${stLabel}</span><td class="td-mono"><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:${m.score}%; background:${sFill}"></div></div><span class="score-val" style="color:${sFill}">${m.score}%</span></div><td class="td-mono">${manutHtml}<td class="td-mono">${m.totalRegs}<td class="td-mono">${m.ultimoReg}</tr>`;
+        const ultimoRegObs = m.ultimoRegObs ? ` (${m.ultimoRegObs.substring(0, 30)}${m.ultimoRegObs.length > 30 ? '...' : ''})` : '';
+        return `<tr class="clickable-row" onclick="window.mostrarDetalheMotorista('${m.id}')"><td class="td-mono">${start + i + 1}<td class="fw-700">${m.nome} ${importadoBadge}<td class="td-mono">${m.cpf || '-'}<td class="td-mono">${m.placa}<td class="td-mono">${m.operador || '-'}<td class="td-mono"><span class="badge ${colorClass}"><div class="badge-dot"></div>${stLabel}</span><td class="td-mono"><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:${m.score}%; background:${sFill}"></div></div><span class="score-val" style="color:${sFill}">${m.score}%</span></div><td class="td-mono">${manutHtml}<td class="td-mono">${m.totalRegs}<td class="td-mono">${m.ultimoReg}${ultimoRegObs}</tr>`;
       }).join('');
     }
     renderPagination('dashboard-pagination', pagination.dashboard, totalItems, renderDashboard);
@@ -2978,8 +3021,20 @@
     if (!pageItems.length) tbody.innerHTML = '<tr class="empty-row"><td colspan="10">Nenhum motorista</tr>';
     else {
       tbody.innerHTML = pageItems.map((m) => {
-        let statusLabel = m.status === 'ativo' ? 'ATIVO' : (m.status === 'atrasado' ? 'ATRASADO' : 'AFASTADO');
-        let statusClass = m.status === 'ativo' ? 'badge-ativo' : (m.status === 'atrasado' ? 'badge-atrasado' : 'badge-folga');
+        let statusLabel = m.status === 'ativo' ? 'ATIVO' : (m.status === 'atrasado' ? 'ATRASADO' : 
+          m.statusDetalhado === 'folga' ? 'FOLGA' : 
+          m.statusDetalhado === 'ferias' ? 'FÉRIAS' : 
+          m.statusDetalhado === 'atestado' ? 'ATESTADO' : 
+          m.statusDetalhado === 'licenca' ? 'LICENÇA' :
+          m.statusDetalhado === 'rescindido' ? 'RESCISÃO' : 
+          m.statusDetalhado === 'demitido' ? 'DEMITIDO' : 'AFASTADO');
+        let statusClass = m.status === 'ativo' ? 'badge-ativo' : (m.status === 'atrasado' ? 'badge-atrasado' : 
+          m.statusDetalhado === 'folga' ? 'badge-folga' : 
+          m.statusDetalhado === 'ferias' ? 'badge-justificado' : 
+          m.statusDetalhado === 'atestado' ? 'badge-alteracao' : 
+          m.statusDetalhado === 'licenca' ? 'badge-alteracao' :
+          m.statusDetalhado === 'rescindido' ? 'badge-atrasado' : 
+          m.statusDetalhado === 'demitido' ? 'badge-erro' : 'badge-folga');
         let treinamentoBadge = m.treinado ? '<span class="badge badge-correto">🎓 Treinado</span>' : '<span class="badge badge-folga">❌ Não Treinado</span>';
         let treinamentoInfo = m.treinado && m.dataTreinamento ? `<div style="font-size:10px;color:var(--text-muted)">${m.dataTreinamento}${m.instrutor ? ' · ' + m.instrutor : ''}</div>` : '';
         const importadoBadge = m.importado ? '<span class="badge badge-importado">📥</span>' : '';
@@ -4172,20 +4227,10 @@
 
   window.carregarPendencias = carregarPendencias;
 
-  // ===== RELATÓRIOS =====
-  // Funções de relatório atualizadas com métricas avançadas
+  // ===== RELATÓRIOS (ATUALIZADOS) =====
 
-  // 1. RELATÓRIO GERAL DE MOTORISTAS (ATUALIZADO)
-  window.gerarRelatorioMotoristas = function() {
-    const status = document.getElementById('relatorio-status')?.value || 'todos';
-    const operador = document.getElementById('relatorio-operador')?.value || '';
-    const filtroTreinado = document.getElementById('relatorio-filtro-treinado')?.value || 'todos';
-    const mes = document.getElementById('relatorio-mes')?.value;
-    const di = document.getElementById('relatorio-inicio')?.value;
-    const df = document.getElementById('relatorio-fim')?.value;
-
-    let lista = processarMotoristasDados();
-
+  // Função auxiliar para aplicar filtros comuns
+  function aplicarFiltrosRelatorio(lista, status, operador, filtroTreinado, mes, di, df) {
     if (status !== 'todos') {
       lista = lista.filter(m => m.status === status || (status === 'afastado' && (m.status === 'folga' || m.status === 'afastado')));
     }
@@ -4198,24 +4243,63 @@
     }
     if (di) lista = lista.filter(m => m.ultimoReg >= di);
     if (df) lista = lista.filter(m => m.ultimoReg <= df);
+    return lista;
+  }
 
-    const trintaDiasAtras = new Date();
-    trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30);
+  // 1. RELATÓRIO GERAL DE MOTORISTAS (ATUALIZADO)
+  window.gerarRelatorioMotoristas = function() {
+    const status = document.getElementById('relatorio-status')?.value || 'todos';
+    const operador = document.getElementById('relatorio-operador')?.value || '';
+    const filtroTreinado = document.getElementById('relatorio-filtro-treinado')?.value || 'todos';
+    const mes = document.getElementById('relatorio-mes')?.value;
+    const di = document.getElementById('relatorio-inicio')?.value;
+    const df = document.getElementById('relatorio-fim')?.value;
+
+    let lista = processarMotoristasDados();
+    lista = aplicarFiltrosRelatorio(lista, status, operador, filtroTreinado, mes, di, df);
 
     const dados = lista.map(m => {
-      const regsMotorista = registros.filter(r => r.motoristaId === m.id);
-      const totalRegs = regsMotorista.length;
-      const erros = regsMotorista.filter(r => r.tipo === 'Erro').length;
+      // Filtrar registros dentro do período
+      let regsPeriodo = registros.filter(r => r.motoristaId === m.id);
+      if (di) regsPeriodo = regsPeriodo.filter(r => r.data >= di);
+      if (df) regsPeriodo = regsPeriodo.filter(r => r.data <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        regsPeriodo = regsPeriodo.filter(r => r.data.startsWith(`${ano}-${mesNum}`));
+      }
+      const totalRegs = regsPeriodo.length;
+      const erros = regsPeriodo.filter(r => r.tipo === 'Erro').length;
       const taxaErro = totalRegs ? ((erros / totalRegs) * 100).toFixed(1) : '0.0';
 
-      const jornadasFiltradas = jornadaData.filter(j => j.motoristaId === m.id && new Date(j.data) >= trintaDiasAtras);
+      // Média de horas dirigidas nos últimos 30 dias (considerando o período filtrado)
+      let jornadasFiltradas = jornadaData.filter(j => j.motoristaId === m.id);
+      if (di) jornadasFiltradas = jornadasFiltradas.filter(j => j.data >= di);
+      if (df) jornadasFiltradas = jornadasFiltradas.filter(j => j.data <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        jornadasFiltradas = jornadasFiltradas.filter(j => j.data.startsWith(`${ano}-${mesNum}`));
+      }
       const mediaHoras = jornadasFiltradas.length ? (jornadasFiltradas.reduce((s, j) => s + (parseFloat(j.direcao) || 0), 0) / jornadasFiltradas.length).toFixed(1) : '0.0';
 
-      const checklistsMotorista = checklists.filter(c => c.motoristaId === m.id);
-      const aprovados = checklistsMotorista.filter(c => c.resultado === 'aprovado').length;
-      const taxaChecklist = checklistsMotorista.length ? ((aprovados / checklistsMotorista.length) * 100).toFixed(1) : '-';
+      // Checklists no período
+      let checklistsPeriodo = checklists.filter(c => c.motoristaId === m.id);
+      if (di) checklistsPeriodo = checklistsPeriodo.filter(c => c.data >= di);
+      if (df) checklistsPeriodo = checklistsPeriodo.filter(c => c.data <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        checklistsPeriodo = checklistsPeriodo.filter(c => c.data.startsWith(`${ano}-${mesNum}`));
+      }
+      const aprovados = checklistsPeriodo.filter(c => c.resultado === 'aprovado').length;
+      const taxaChecklist = checklistsPeriodo.length ? ((aprovados / checklistsPeriodo.length) * 100).toFixed(1) : '-';
 
-      const atestados = folgas.filter(f => f.motoristaId === m.id && f.tipo === 'Atestado' && new Date(f.inicio) >= trintaDiasAtras);
+      // Absenteísmo (dias de atestado no período)
+      let atestados = folgas.filter(f => f.motoristaId === m.id && f.tipo === 'Atestado');
+      if (di) atestados = atestados.filter(f => f.inicio >= di);
+      if (df) atestados = atestados.filter(f => f.fim <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        atestados = atestados.filter(f => f.inicio.startsWith(`${ano}-${mesNum}`));
+      }
       const diasAtestado = atestados.reduce((sum, f) => {
         const inicio = new Date(f.inicio);
         const fim = new Date(f.fim);
@@ -4223,26 +4307,30 @@
         return sum + diff;
       }, 0);
 
-      const qtdFolgas = folgas.filter(f => f.motoristaId === m.id).length;
+      const qtdFolgas = folgas.filter(f => f.motoristaId === m.id && f.tipo !== 'Atestado').length;
       const qtdManut = manutencoes.filter(mn => mn.motoristaId === m.id).length;
+
+      // Último registro com observação
+      const ultimoReg = regsPeriodo.sort((a,b) => b.data.localeCompare(a.data))[0];
+      const ultimoRegObs = ultimoReg ? `${ultimoReg.data} - ${ultimoReg.obs}` : '-';
 
       return {
         'Motorista': m.nome,
         'CPF': m.cpf || '-',
         'Placa': m.placa,
         'Operador': m.operador || '-',
-        'Status': m.status === 'ativo' ? 'Ativo' : (m.status === 'atrasado' ? 'Atrasado' : 'Afastado'),
+        'Status': m.statusDetalhado === 'ativo' ? 'Ativo' : (m.statusDetalhado === 'atrasado' ? 'Atrasado' : m.statusDetalhado === 'folga' ? 'Folga' : m.statusDetalhado === 'ferias' ? 'Férias' : m.statusDetalhado === 'atestado' ? 'Atestado' : m.statusDetalhado === 'licenca' ? 'Licença' : m.statusDetalhado === 'rescindido' ? 'Rescisão' : m.statusDetalhado === 'demitido' ? 'Demitido' : 'Afastado'),
         'Score': m.score + '%',
         'Treinado': m.treinado ? '✅ Sim' : '❌ Não',
         'Data Treinamento': m.dataTreinamento || '-',
         'Instrutor': m.instrutor || '-',
         'Taxa de Erro (%)': taxaErro + '%',
-        'Média Horas Dirigidas (30d)': mediaHoras + 'h',
+        'Média Horas Dirigidas (período)': mediaHoras + 'h',
         'Taxa Aprovação Checklist (%)': taxaChecklist !== '-' ? taxaChecklist + '%' : '-',
-        'Absenteísmo (dias atestado 30d)': diasAtestado,
+        'Absenteísmo (dias atestado)': diasAtestado,
         'Total Folgas': qtdFolgas,
         'Total Manutenções': qtdManut,
-        'Último Registro': m.ultimoReg || '-',
+        'Último Registro': ultimoRegObs,
         'Cadastro': m.criadoEm ? new Date(m.criadoEm).toLocaleString() : '-'
       };
     });
@@ -4274,20 +4362,37 @@
     if (di) lista = lista.filter(m => m.ultimoReg >= di);
     if (df) lista = lista.filter(m => m.ultimoReg <= df);
 
-    const trintaDiasAtras = new Date(Date.now() - 30*86400000);
-
     const dados = lista.map(m => {
-      const regsMotorista = registros.filter(r => r.motoristaId === m.id);
-      const totalRegs = regsMotorista.length;
-      const erros = regsMotorista.filter(r => r.tipo === 'Erro').length;
+      // Cálculos dentro do período
+      let regsPeriodo = registros.filter(r => r.motoristaId === m.id);
+      if (di) regsPeriodo = regsPeriodo.filter(r => r.data >= di);
+      if (df) regsPeriodo = regsPeriodo.filter(r => r.data <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        regsPeriodo = regsPeriodo.filter(r => r.data.startsWith(`${ano}-${mesNum}`));
+      }
+      const totalRegs = regsPeriodo.length;
+      const erros = regsPeriodo.filter(r => r.tipo === 'Erro').length;
       const taxaErro = totalRegs ? ((erros / totalRegs) * 100).toFixed(1) : '0.0';
 
-      const jornadasFiltradas = jornadaData.filter(j => j.motoristaId === m.id && new Date(j.data) >= trintaDiasAtras);
+      let jornadasFiltradas = jornadaData.filter(j => j.motoristaId === m.id);
+      if (di) jornadasFiltradas = jornadasFiltradas.filter(j => j.data >= di);
+      if (df) jornadasFiltradas = jornadasFiltradas.filter(j => j.data <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        jornadasFiltradas = jornadasFiltradas.filter(j => j.data.startsWith(`${ano}-${mesNum}`));
+      }
       const mediaHoras = jornadasFiltradas.length ? (jornadasFiltradas.reduce((s, j) => s + (parseFloat(j.direcao) || 0), 0) / jornadasFiltradas.length).toFixed(1) : '0.0';
 
-      const checklistsMotorista = checklists.filter(c => c.motoristaId === m.id);
-      const aprovados = checklistsMotorista.filter(c => c.resultado === 'aprovado').length;
-      const taxaChecklist = checklistsMotorista.length ? ((aprovados / checklistsMotorista.length) * 100).toFixed(1) : '-';
+      let checklistsPeriodo = checklists.filter(c => c.motoristaId === m.id);
+      if (di) checklistsPeriodo = checklistsPeriodo.filter(c => c.data >= di);
+      if (df) checklistsPeriodo = checklistsPeriodo.filter(c => c.data <= df);
+      if (mes) {
+        const [ano, mesNum] = mes.split('-');
+        checklistsPeriodo = checklistsPeriodo.filter(c => c.data.startsWith(`${ano}-${mesNum}`));
+      }
+      const aprovados = checklistsPeriodo.filter(c => c.resultado === 'aprovado').length;
+      const taxaChecklist = checklistsPeriodo.length ? ((aprovados / checklistsPeriodo.length) * 100).toFixed(1) : '-';
 
       const qtdFolgas = folgas.filter(f => f.motoristaId === m.id).length;
       const qtdManut = manutencoes.filter(mn => mn.motoristaId === m.id).length;
@@ -4296,18 +4401,18 @@
         'Motorista': m.nome,
         'Placa': m.placa,
         'Operador': m.operador || '-',
-        'Status': m.status,
+        'Status': m.statusDetalhado === 'ativo' ? 'Ativo' : (m.statusDetalhado === 'atrasado' ? 'Atrasado' : m.statusDetalhado === 'folga' ? 'Folga' : m.statusDetalhado === 'ferias' ? 'Férias' : m.statusDetalhado === 'atestado' ? 'Atestado' : m.statusDetalhado === 'licenca' ? 'Licença' : m.statusDetalhado === 'rescindido' ? 'Rescisão' : m.statusDetalhado === 'demitido' ? 'Demitido' : 'Afastado'),
         'Score': m.score + '%',
         'Total Registros': totalRegs,
         'Taxa de Erro (%)': taxaErro + '%',
-        'Média Horas Dirigidas (30d)': mediaHoras + 'h',
+        'Média Horas Dirigidas': mediaHoras + 'h',
         'Taxa Aprovação Checklist': taxaChecklist !== '-' ? taxaChecklist + '%' : '-',
         'Treinado': m.treinado ? 'Sim' : 'Não',
         'Data Treinamento': m.dataTreinamento || '-',
         'Instrutor': m.instrutor || '-',
         'Total Folgas': qtdFolgas,
         'Total Manutenções': qtdManut,
-        'Último Registro': m.ultimoReg || '-'
+        'Último Registro': m.ultimoRegObs || '-'
       };
     });
 
@@ -4324,11 +4429,15 @@
   // 3. RELATÓRIO DE MANUTENÇÕES (ATUALIZADO)
   window.gerarRelatorioManutencoes = function() {
     const mes = document.getElementById('relatorio-mes')?.value;
+    const di = document.getElementById('relatorio-inicio')?.value;
+    const df = document.getElementById('relatorio-fim')?.value;
     let lista = [...manutencoes];
     if (mes) {
       const [ano, mesNum] = mes.split('-');
       lista = lista.filter(m => m.ultimaData && m.ultimaData.startsWith(`${ano}-${mesNum}`));
     }
+    if (di) lista = lista.filter(m => m.ultimaData >= di);
+    if (df) lista = lista.filter(m => m.ultimaData <= df);
 
     const dados = lista.map(m => {
       const mot = getMotoristaById(m.motoristaId);
@@ -4357,14 +4466,18 @@
     mostrarToast('🔧 Relatório de Manutenções exportado!', 'success');
   };
 
-  // 4. RELATÓRIO DE OCORRÊNCIAS
+  // 4. RELATÓRIO DE OCORRÊNCIAS (ATUALIZADO)
   window.gerarRelatorioOcorrencias = function() {
     const mes = document.getElementById('relatorio-mes')?.value;
+    const di = document.getElementById('relatorio-inicio')?.value;
+    const df = document.getElementById('relatorio-fim')?.value;
     let lista = [...registros];
     if (mes) {
       const [ano, mesNum] = mes.split('-');
       lista = lista.filter(r => r.data && r.data.startsWith(`${ano}-${mesNum}`));
     }
+    if (di) lista = lista.filter(r => r.data >= di);
+    if (df) lista = lista.filter(r => r.data <= df);
     const dados = lista.map(r => {
       const mot = getMotoristaById(r.motoristaId);
       return {
@@ -4384,7 +4497,7 @@
     mostrarToast('📋 Relatório de Ocorrências exportado!', 'success');
   };
 
-  // 5. RELATÓRIO DE TREINAMENTO (NOVO)
+  // 5. RELATÓRIO DE TREINAMENTO (ATUALIZADO)
   window.gerarRelatorioTreinamento = function() {
     const filtroTreinado = document.getElementById('relatorio-filtro-treinado')?.value || 'todos';
     let lista = processarMotoristasDados();
@@ -4401,7 +4514,7 @@
         'Data Treinamento': m.dataTreinamento || '-',
         'Instrutor': m.instrutor || '-',
         'Dias desde Treinamento': diasDesdeTreinamento !== '-' ? diasDesdeTreinamento + ' dias' : '-',
-        'Status Atual': m.status === 'ativo' ? 'Ativo' : (m.status === 'atrasado' ? 'Atrasado' : 'Afastado'),
+        'Status Atual': m.statusDetalhado === 'ativo' ? 'Ativo' : (m.statusDetalhado === 'atrasado' ? 'Atrasado' : m.statusDetalhado === 'folga' ? 'Folga' : m.statusDetalhado === 'ferias' ? 'Férias' : m.statusDetalhado === 'atestado' ? 'Atestado' : m.statusDetalhado === 'licenca' ? 'Licença' : m.statusDetalhado === 'rescindido' ? 'Rescisão' : m.statusDetalhado === 'demitido' ? 'Demitido' : 'Afastado'),
         'Score': m.score + '%'
       };
     });
@@ -4416,7 +4529,7 @@
     mostrarToast('🎓 Relatório de Treinamento exportado!', 'success');
   };
 
-  // 6. RELATÓRIO DE JORNADA (NOVO)
+  // 6. RELATÓRIO DE JORNADA (ATUALIZADO)
   window.gerarRelatorioJornada = function() {
     const mes = document.getElementById('relatorio-mes')?.value;
     const di = document.getElementById('relatorio-inicio')?.value;
@@ -4485,7 +4598,7 @@
       'CPF': motorista.cpf || '-',
       'Placa': motorista.placa,
       'Operador': motorista.operador || '-',
-      'Status': motorista.status === 'ativo' ? 'Ativo' : (motorista.status === 'atrasado' ? 'Atrasado' : 'Afastado'),
+      'Status': motorista.statusDetalhado === 'ativo' ? 'Ativo' : (motorista.statusDetalhado === 'atrasado' ? 'Atrasado' : motorista.statusDetalhado === 'folga' ? 'Folga' : motorista.statusDetalhado === 'ferias' ? 'Férias' : motorista.statusDetalhado === 'atestado' ? 'Atestado' : motorista.statusDetalhado === 'licenca' ? 'Licença' : motorista.statusDetalhado === 'rescindido' ? 'Rescisão' : motorista.statusDetalhado === 'demitido' ? 'Demitido' : 'Afastado'),
       'Score': motorista.score + '%',
       'Treinado': motorista.treinado ? 'Sim' : 'Não',
       'Data Treinamento': motorista.dataTreinamento || '-',
@@ -4519,7 +4632,7 @@
     mostrarToast(`📄 Relatório de ${motorista.nome} exportado!`, "success");
   };
 
-  // 8. RELATÓRIO POR OPERADOR
+  // 8. RELATÓRIO POR OPERADOR (ATUALIZADO)
   window.gerarRelatorioOperador = function() {
     const operador = document.getElementById('relatorio-operador-individual')?.value;
     if (!operador) { mostrarToast("Digite o nome do operador!", "error"); return; }
@@ -4535,7 +4648,7 @@
       return {
         'Motorista': m.nome,
         'Placa': m.placa,
-        'Status': m.status,
+        'Status': m.statusDetalhado === 'ativo' ? 'Ativo' : (m.statusDetalhado === 'atrasado' ? 'Atrasado' : m.statusDetalhado === 'folga' ? 'Folga' : m.statusDetalhado === 'ferias' ? 'Férias' : m.statusDetalhado === 'atestado' ? 'Atestado' : m.statusDetalhado === 'licenca' ? 'Licença' : m.statusDetalhado === 'rescindido' ? 'Rescisão' : m.statusDetalhado === 'demitido' ? 'Demitido' : 'Afastado'),
         'Score': m.score + '%',
         'Treinado': m.treinado ? 'Sim' : 'Não',
         'Registros': totalRegs,
@@ -4552,9 +4665,195 @@
     mostrarToast(`🏢 Relatório do operador ${operador} exportado!`, "success");
   };
 
-  // ===== EXPORTAÇÕES EXISTENTES (MANTIDAS) =====
-  // As funções de exportação de cada módulo (Motoristas, Folgas, Registros, Manutenção, Score) permanecem intactas.
-  // Apenas a função exportToExcel do dashboard já está usando os dados processados.
+  // 9. NOVO RELATÓRIO: RESUMO EXECUTIVO
+  window.gerarRelatorioResumoExecutivo = function() {
+    const mes = document.getElementById('relatorio-mes')?.value;
+    const di = document.getElementById('relatorio-inicio')?.value;
+    const df = document.getElementById('relatorio-fim')?.value;
+
+    let lista = processarMotoristasDados();
+    if (mes) {
+      const [ano, mesNum] = mes.split('-');
+      lista = lista.filter(m => m.criadoEm && m.criadoEm.startsWith(`${ano}-${mesNum}`));
+    }
+    if (di) lista = lista.filter(m => m.ultimoReg >= di);
+    if (df) lista = lista.filter(m => m.ultimoReg <= df);
+
+    const total = lista.length;
+    const ativos = lista.filter(m => m.status === 'ativo').length;
+    const afastados = lista.filter(m => m.status !== 'ativo').length;
+    const treinados = lista.filter(m => m.treinado).length;
+    const naoTreinados = total - treinados;
+    const scoreMedio = total ? Math.round(lista.reduce((a,b) => a + b.score, 0) / total) : 0;
+
+    const totalRegistros = registros.length;
+    const totalErros = registros.filter(r => r.tipo === 'Erro').length;
+    const taxaErroGeral = totalRegistros ? ((totalErros / totalRegistros) * 100).toFixed(1) : '0.0';
+
+    const totalManut = manutencoes.length;
+    const manutUrgentes = manutencoes.filter(m => m.status === 'urgente').length;
+    const manutAtencao = manutencoes.filter(m => m.status === 'atencao').length;
+
+    const totalChecklists = checklists.length;
+    const aprovadosCheck = checklists.filter(c => c.resultado === 'aprovado').length;
+    const taxaCheckGeral = totalChecklists ? ((aprovadosCheck / totalChecklists) * 100).toFixed(1) : '-';
+
+    const totalTarefas = tarefasData.length;
+    const tarefasConcluidas = tarefasData.filter(t => t.status === 'concluido').length;
+    const taxaTarefas = totalTarefas ? ((tarefasConcluidas / totalTarefas) * 100).toFixed(1) : '-';
+
+    const dados = [{
+      'Indicador': 'Total de Motoristas',
+      'Valor': total
+    }, {
+      'Indicador': 'Motoristas Ativos',
+      'Valor': ativos
+    }, {
+      'Indicador': 'Motoristas Afastados',
+      'Valor': afastados
+    }, {
+      'Indicador': 'Treinados',
+      'Valor': treinados
+    }, {
+      'Indicador': 'Não Treinados',
+      'Valor': naoTreinados
+    }, {
+      'Indicador': 'Score Médio',
+      'Valor': scoreMedio + '%'
+    }, {
+      'Indicador': 'Total de Registros Operacionais',
+      'Valor': totalRegistros
+    }, {
+      'Indicador': 'Taxa de Erro Geral',
+      'Valor': taxaErroGeral + '%'
+    }, {
+      'Indicador': 'Total de Manutenções',
+      'Valor': totalManut
+    }, {
+      'Indicador': 'Manutenções Urgentes',
+      'Valor': manutUrgentes
+    }, {
+      'Indicador': 'Manutenções em Atenção',
+      'Valor': manutAtencao
+    }, {
+      'Indicador': 'Total de Checklists',
+      'Valor': totalChecklists
+    }, {
+      'Indicador': 'Taxa de Aprovação Checklist',
+      'Valor': taxaCheckGeral !== '-' ? taxaCheckGeral + '%' : '-'
+    }, {
+      'Indicador': 'Total de Tarefas',
+      'Valor': totalTarefas
+    }, {
+      'Indicador': 'Tarefas Concluídas',
+      'Valor': tarefasConcluidas
+    }, {
+      'Indicador': 'Taxa de Conclusão de Tarefas',
+      'Valor': taxaTarefas !== '-' ? taxaTarefas + '%' : '-'
+    }];
+
+    const ws = XLSX.utils.json_to_sheet(dados);
+    ws['!cols'] = [{ wch: 30 }, { wch: 20 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Resumo Executivo');
+    XLSX.writeFile(wb, `tms_relatorio_resumo_executivo_${today()}.xlsx`);
+    mostrarToast('📊 Resumo Executivo exportado!', 'success');
+  };
+
+  // ===== MONITORAMENTO DO SISTEMA (com erros) =====
+  function renderMonitoramento() {
+    if (currentUser?.role !== 'master') return;
+    let lista = [...usuarios];
+    const search = document.getElementById('monit-search')?.value.toLowerCase() || '';
+    if (search) lista = lista.filter(u => (u.nome || '').toLowerCase().includes(search) || u.username.toLowerCase().includes(search));
+    const totalItems = lista.length;
+    pagination.monitoramento.total = totalItems;
+    const start = (pagination.monitoramento.page - 1) * pagination.monitoramento.limit;
+    const pageItems = lista.slice(start, start + pagination.monitoramento.limit);
+    document.getElementById('monit-count').textContent = totalItems;
+    const tbody = document.getElementById('monit-table-body');
+    if (!tbody) return;
+    if (!pageItems.length) tbody.innerHTML = '<tr><td colspan="8">Nenhum usuário</tr>';
+    else tbody.innerHTML = pageItems.map((u, i) => {
+      const ultimoLogin = u.ultimoLogin ? new Date(u.ultimoLogin).toLocaleString() : 'Nunca';
+      const dias = u.ultimoLogin ? Math.floor((Date.now() - new Date(u.ultimoLogin)) / (1000*60*60*24)) : '-';
+      const roleNames = { master: '👑 MASTER', operador: '👤 OPERADOR', consultor: '👁️ CONSULTOR' };
+      const statusBadge = !u.ultimoLogin ? '<span class="badge badge-erro">NUNCA</span>' : (dias <= 7 ? '<span class="badge badge-ativo">ATIVO</span>' : '<span class="badge badge-atrasado">INATIVO</span>');
+      return `<tr><td class="td-mono">${start + i + 1}</td><td class="fw-700">${u.nome || u.username}</td><td class="td-mono">${u.username}</td><td class="td-mono">${roleNames[u.role] || u.role}</td><td class="td-mono">${ultimoLogin}</td><td class="td-mono">${dias}</td><td class="td-mono">${u.totalLogins || 0}</td><td class="td-mono">${statusBadge}</td></tr>`;
+    }).join('');
+    renderPagination('monitoramento-pagination', pagination.monitoramento, totalItems, renderMonitoramento);
+
+    // KPIs de monitoramento
+    const totalUsers = usuarios.length;
+    const masters = usuarios.filter(u => u.role === 'master').length;
+    const operadores = usuarios.filter(u => u.role === 'operador').length;
+    const consultores = usuarios.filter(u => u.role === 'consultor').length;
+    const ativos = usuarios.filter(u => u.ultimoLogin && (Date.now() - new Date(u.ultimoLogin) < 7*24*60*60*1000)).length;
+    const kpiGrid = document.getElementById('monit-kpi-grid');
+    if (kpiGrid) {
+      kpiGrid.innerHTML = `
+        <div class="kpi-card"><div class="kpi-label">Total Usuários</div><div class="kpi-value">${totalUsers}</div></div>
+        <div class="kpi-card" style="--kpi-color:var(--accent)"><div class="kpi-label">👑 Master</div><div class="kpi-value">${masters}</div></div>
+        <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">👤 Operadores</div><div class="kpi-value">${operadores}</div></div>
+        <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-label">👁️ Consultores</div><div class="kpi-value">${consultores}</div></div>
+        <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-label">🟢 Ativos (7d)</div><div class="kpi-value">${ativos}</div></div>
+      `;
+    }
+
+    // Carregar erros do sistema
+    renderErrosSistema();
+  }
+
+  window.renderMonitoramento = renderMonitoramento;
+  window.resetMonitoramentoFilter = function() { renderMonitoramento(); };
+  window.exportMonitoramentoToExcel = function() {
+    const dados = usuarios.map(u => ({ Nome: u.nome || u.username, Usuario: u.username, Role: u.role, 'Ultimo Login': u.ultimoLogin ? new Date(u.ultimoLogin).toLocaleString() : 'Nunca', 'Total Logins': u.totalLogins || 0 }));
+    const ws = XLSX.utils.json_to_sheet(dados); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Monitoramento"); XLSX.writeFile(wb, `tms_monitoramento_${today()}.xlsx`);
+    mostrarToast("👁️ Monitoramento exportado!", "success");
+  };
+
+  // ===== FUNÇÕES DE ERROS DO SISTEMA =====
+  function renderErrosSistema() {
+    if (currentUser?.role !== 'master') return;
+    const search = document.getElementById('error-search')?.value.toLowerCase() || '';
+    let lista = [...systemErrors];
+    if (search) lista = lista.filter(e => e.mensagem.toLowerCase().includes(search) || e.detalhes.toLowerCase().includes(search) || e.modulo.toLowerCase().includes(search));
+    lista.sort((a,b) => b.timestamp.localeCompare(a.timestamp));
+    pagination.erros.total = lista.length;
+    const start = (pagination.erros.page - 1) * pagination.erros.limit;
+    const pageItems = lista.slice(start, start + pagination.erros.limit);
+    document.getElementById('error-count').textContent = lista.length;
+    const tbody = document.getElementById('error-table-body');
+    if (!tbody) return;
+    if (!pageItems.length) { tbody.innerHTML = '<tr><td colspan="5">Nenhum erro registrado</td></tr>'; }
+    else {
+      tbody.innerHTML = pageItems.map(e => `<tr><td class="td-mono">${new Date(e.timestamp).toLocaleString()}</td><td class="td-mono">${e.usuario || 'Sistema'}</td><td class="td-mono">${e.modulo || 'geral'}</td><td>${e.mensagem}</td><td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">${e.detalhes || '-'}</td></tr>`).join('');
+    }
+    renderPagination('error-pagination', pagination.erros, lista.length, renderErrosSistema);
+
+    // KPIs de erros
+    const totalErros = systemErrors.length;
+    const ultimaHora = systemErrors.filter(e => (Date.now() - new Date(e.timestamp).getTime()) < 60*60*1000).length;
+    const ultimoDia = systemErrors.filter(e => (Date.now() - new Date(e.timestamp).getTime()) < 24*60*60*1000).length;
+    const erroGrid = document.getElementById('error-kpi-grid');
+    if (erroGrid) {
+      erroGrid.innerHTML = `
+        <div class="kpi-card" style="--kpi-color:var(--red)"><div class="kpi-label">Total Erros</div><div class="kpi-value">${totalErros}</div></div>
+        <div class="kpi-card" style="--kpi-color:var(--orange)"><div class="kpi-label">Última Hora</div><div class="kpi-value">${ultimaHora}</div></div>
+        <div class="kpi-card" style="--kpi-color:var(--yellow)"><div class="kpi-label">Último Dia</div><div class="kpi-value">${ultimoDia}</div></div>
+      `;
+    }
+  }
+
+  window.renderErrosSistema = renderErrosSistema;
+
+  window.limparErrosSistema = function() {
+    if (confirm('Limpar todos os erros do sistema?')) {
+      systemErrors = [];
+      renderErrosSistema();
+      mostrarToast('Erros limpos', 'info');
+    }
+  };
 
   // ===== CONFIGURAÇÕES E AUDITORIA =====
   async function carregarConfiguracoes() {
@@ -4665,6 +4964,9 @@
     if (pageId === 'executivo') renderExecutivo();
     if (pageId === 'pendencias') carregarPendencias();
     if (pageId === 'checklist') renderChecklists();
+    if (pageId === 'monitoramento' && currentUser?.role === 'master') {
+      renderMonitoramento();
+    }
     recarregarInterface();
     if (pageId !== 'executivo') destroyCharts();
   };
@@ -5034,7 +5336,7 @@
 
   // Exportações de cada módulo (mantidas)
   window.exportMotoristasToExcel = function() {
-    const dados = processarMotoristasDados().map(m => ({ Nome: m.nome, CPF: m.cpf, Placa: m.placa, Operador: m.operador, Status: m.status, Score: m.score, 'Total Registros': m.totalRegs, 'Horas Trabalhadas': m.horasTrabalhadas, 'Último Registro': m.ultimoReg, 'Cadastro': m.criadoEm ? new Date(m.criadoEm).toLocaleString() : '-' }));
+    const dados = processarMotoristasDados().map(m => ({ Nome: m.nome, CPF: m.cpf, Placa: m.placa, Operador: m.operador, Status: m.statusDetalhado, Score: m.score, 'Total Registros': m.totalRegs, 'Horas Trabalhadas': m.horasTrabalhadas, 'Último Registro': m.ultimoRegObs || m.ultimoReg, 'Cadastro': m.criadoEm ? new Date(m.criadoEm).toLocaleString() : '-' }));
     const ws = XLSX.utils.json_to_sheet(dados);
     const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Motoristas"); XLSX.writeFile(wb, `tms_motoristas_${today()}.xlsx`);
     mostrarToast("📊 Motoristas exportados!", "success");
@@ -5056,12 +5358,12 @@
     mostrarToast("🔧 Manutenções exportadas!", "success");
   };
   window.exportScoreToExcel = function() {
-    const dados = processarMotoristasDados().sort((a,b) => b.score - a.score).map((m, i) => ({ Rank: i+1, Nome: m.nome, Placa: m.placa, Operador: m.operador, Score: m.score, Status: m.status, Registros: m.totalRegs }));
+    const dados = processarMotoristasDados().sort((a,b) => b.score - a.score).map((m, i) => ({ Rank: i+1, Nome: m.nome, Placa: m.placa, Operador: m.operador, Score: m.score, Status: m.statusDetalhado, Registros: m.totalRegs }));
     const ws = XLSX.utils.json_to_sheet(dados); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Score"); XLSX.writeFile(wb, `tms_score_${today()}.xlsx`);
     mostrarToast("🏆 Score exportado!", "success");
   };
   window.exportToExcel = function() {
-    const dados = processarMotoristasDados().map(m => ({ Nome: m.nome, CPF: m.cpf, Placa: m.placa, Operador: m.operador, Status: m.status, Score: m.score, 'Total Registros': m.totalRegs, 'Horas Trabalhadas': m.horasTrabalhadas, 'Último Registro': m.ultimoReg, Manutencao: m.manutencao?.status || '-' }));
+    const dados = processarMotoristasDados().map(m => ({ Nome: m.nome, CPF: m.cpf, Placa: m.placa, Operador: m.operador, Status: m.statusDetalhado, Score: m.score, 'Total Registros': m.totalRegs, 'Horas Trabalhadas': m.horasTrabalhadas, 'Último Registro': m.ultimoRegObs || m.ultimoReg, Manutencao: m.manutencao?.status || '-' }));
     const ws = XLSX.utils.json_to_sheet(dados); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Dashboard"); XLSX.writeFile(wb, `tms_dashboard_${today()}.xlsx`);
     mostrarToast("📊 Dashboard exportado!", "success");
   };
@@ -5310,38 +5612,6 @@
     mostrarToast("Exportado", "success");
   };
 
-  // ===== MONITORAMENTO =====
-  function renderMonitoramento() {
-    if (currentUser?.role !== 'master') return;
-    let lista = [...usuarios];
-    const search = document.getElementById('monit-search')?.value.toLowerCase() || '';
-    if (search) lista = lista.filter(u => (u.nome || '').toLowerCase().includes(search) || u.username.toLowerCase().includes(search));
-    const totalItems = lista.length;
-    pagination.monitoramento.total = totalItems;
-    const start = (pagination.monitoramento.page - 1) * pagination.monitoramento.limit;
-    const pageItems = lista.slice(start, start + pagination.monitoramento.limit);
-    document.getElementById('monit-count').textContent = totalItems;
-    const tbody = document.getElementById('monit-table-body');
-    if (!tbody) return;
-    if (!pageItems.length) tbody.innerHTML = '<tr><td colspan="8">Nenhum usuário</tr>';
-    else tbody.innerHTML = pageItems.map((u, i) => {
-      const ultimoLogin = u.ultimoLogin ? new Date(u.ultimoLogin).toLocaleString() : 'Nunca';
-      const dias = u.ultimoLogin ? Math.floor((Date.now() - new Date(u.ultimoLogin)) / (1000*60*60*24)) : '-';
-      const roleNames = { master: '👑 MASTER', operador: '👤 OPERADOR', consultor: '👁️ CONSULTOR' };
-      const statusBadge = !u.ultimoLogin ? '<span class="badge badge-erro">NUNCA</span>' : (dias <= 7 ? '<span class="badge badge-ativo">ATIVO</span>' : '<span class="badge badge-atrasado">INATIVO</span>');
-      return `<tr><td class="td-mono">${start + i + 1}</td><td class="fw-700">${u.nome || u.username}</td><td class="td-mono">${u.username}</td><td class="td-mono">${roleNames[u.role] || u.role}</td><td class="td-mono">${ultimoLogin}</td><td class="td-mono">${dias}</td><td class="td-mono">${u.totalLogins || 0}</td><td class="td-mono">${statusBadge}</td></tr>`;
-    }).join('');
-    renderPagination('monitoramento-pagination', pagination.monitoramento, totalItems, renderMonitoramento);
-  }
-
-  window.renderMonitoramento = renderMonitoramento;
-  window.resetMonitoramentoFilter = function() { renderMonitoramento(); };
-  window.exportMonitoramentoToExcel = function() {
-    const dados = usuarios.map(u => ({ Nome: u.nome || u.username, Usuario: u.username, Role: u.role, 'Ultimo Login': u.ultimoLogin ? new Date(u.ultimoLogin).toLocaleString() : 'Nunca', 'Total Logins': u.totalLogins || 0 }));
-    const ws = XLSX.utils.json_to_sheet(dados); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Monitoramento"); XLSX.writeFile(wb, `tms_monitoramento_${today()}.xlsx`);
-    mostrarToast("👁️ Monitoramento exportado!", "success");
-  };
-
   // ===== USUÁRIOS =====
   function renderUsuarios() {
     if (currentUser?.role !== 'master') return;
@@ -5456,6 +5726,19 @@
     });
     iniciarListenerJornada();
     iniciarListenerTarefas();
+
+    // Carregar erros salvos do Firestore
+    onSnapshot(query(collection(db, "system_errors"), orderBy("timestamp", "desc")), (snapshot) => {
+      const errosFirestore = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Mesclar com erros locais (evitar duplicados)
+      const ids = new Set(systemErrors.map(e => e.id));
+      errosFirestore.forEach(e => {
+        if (!ids.has(e.id)) systemErrors.push(e);
+      });
+      if (currentPage === 'monitoramento' && currentUser?.role === 'master') {
+        renderErrosSistema();
+      }
+    });
   }
 
   function recarregarInterface() {
@@ -5731,6 +6014,7 @@
   window.doLogin = doLogin;
   window.checkSession = checkSession;
   window.renderImportacoesAnteriores = renderImportacoesAnteriores;
+  window.renderErrosSistema = renderErrosSistema;
 
   checkSession();
 </script>
